@@ -107,3 +107,5 @@ func TestMagnetsHowDoTheyWork(t *testing.T) {
 	assert(t, rmc.MagneticVariation.Value == 3.1)
 	assert(t, rmc.MagneticVariation.Cardinal == "W")
 }
+
+// vim: foldmethod=marker
