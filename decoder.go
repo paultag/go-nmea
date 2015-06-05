@@ -38,6 +38,10 @@ func decodeToValue(incoming reflect.Value, data string) error {
 		}
 		incoming.SetInt(int64(value))
 	case reflect.Float64:
+		if data == "" {
+			incoming.SetFloat(0.0)
+			return nil
+		}
 		value, err := strconv.ParseFloat(data, 64)
 		if err != nil {
 			return err
