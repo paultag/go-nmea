@@ -37,9 +37,21 @@ func NewNMEA() NMEA {
 	n := NMEA{parsers: map[string](func(string) (Sentence, error)){}}
 
 	n.Register("GPRMC", func(data string) (Sentence, error) {
-		rmc := GPRMCSentence{}
-		err := Decode(&rmc, data)
-		return &rmc, err
+		s := GPRMCSentence{}
+		err := Decode(&s, data)
+		return &s, err
+	})
+
+	n.Register("GPGSA", func(data string) (Sentence, error) {
+		s := GPGSASentence{}
+		err := Decode(&s, data)
+		return &s, err
+	})
+
+	n.Register("GPGGA", func(data string) (Sentence, error) {
+		s := GPGGASentence{}
+		err := Decode(&s, data)
+		return &s, err
 	})
 
 	return n
