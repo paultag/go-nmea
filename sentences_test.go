@@ -108,4 +108,33 @@ func TestMagnetsHowDoTheyWork(t *testing.T) {
 	assert(t, rmc.MagneticVariation.Cardinal == "W")
 }
 
+func TestGSA(t *testing.T) {
+	gsa := nmea.GPGSASentence{}
+	err := nmea.Decode(&gsa,
+		"$GPGSA,M,3,31,32,03,01,04,,,,,,,,7.9,6.5,4.4*36",
+	)
+	isok(t, err)
+	assert(t, gsa.Satellites.PRN1 == 31)
+	assert(t, len(gsa.GetSatellites()) == 5)
+	sats := gsa.GetSatellites()
+	assert(t, sats[0] == 31)
+	assert(t, sats[1] == 32)
+	assert(t, sats[2] == 3)
+	assert(t, sats[3] == 1)
+	assert(t, sats[4] == 4)
+}
+
+func TestGGA(t *testing.T) {
+	gga := nmea.GPGGASentence{}
+	err := nmea.Decode(&gga,
+		"$GPGGA,124252.000,0000.1800,N,00000.2000,W,1,05,6.5,36.0,M,-33.5,M,,0000*5C",
+	)
+	isok(t, err)
+
+	assert(t, gga.Quality == 1)
+	assert(t, gga.Altitude.Value == 36.0)
+	assert(t, gga.Latitude.Parallel == 0.18)
+	assert(t, gga.Longitude.Meridian == 0.2)
+}
+
 // vim: foldmethod=marker
