@@ -32,6 +32,10 @@ func decodeToValue(incoming reflect.Value, data string) error {
 	case reflect.String:
 		incoming.SetString(data)
 	case reflect.Int:
+		if data == "" {
+			incoming.SetInt(0)
+			return nil
+		}
 		value, err := strconv.Atoi(data)
 		if err != nil {
 			return err
