@@ -29,7 +29,13 @@ func main() {
 		}
 		myLine := strings.Trim(string(line), "\n\r")
 		err = n.Parse(myLine)
-		fmt.Printf("[K%s\n[K%s\r[1A", myLine, n.RMC)
+		lat := 0.0
+		lon := 0.0
+		if n.RMC != nil {
+			lat = n.RMC.GetLatitude()
+			lon = n.RMC.GetLongitude()
+		}
+		fmt.Printf("[KLat: %f\n[KLon: %f\r\n[K%s\r[2A", lat, lon, myLine)
 	}
 }
 ```
