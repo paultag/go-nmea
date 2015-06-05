@@ -29,6 +29,8 @@ import (
 type NMEA struct {
 	parsers map[string](func(string) (Sentence, error))
 	RMC     *GPRMCSentence `nmeaDataType:"GPRMC"`
+	GSA     *GPGSASentence `nmeaDataType:"GPGSA"`
+	GGA     *GPGGASentence `nmeaDataType:"GPGGA"`
 }
 
 func NewNMEA() NMEA {
