@@ -89,7 +89,7 @@ func decodeToPointer(incoming reflect.Value, data []string) error {
 	return nil
 }
 
-func Decode(incoming interface{}, data string) error {
+func Decode(incoming Sentence, data string) error {
 	incomingData := strings.SplitN(data, "*", 2)
 	if len(incomingData) != 2 {
 		return fmt.Errorf("Was expecting a checksum")
