@@ -20,14 +20,23 @@
 
 package nmea
 
-type Sentence struct {
+type Sentence interface {
+	GetDataType() string
+}
+
+type SentenceCore struct {
+	Sentence
 	DataType string `nmea:"0"`
+}
+
+func (s *SentenceCore) GetDataType() string {
+	return s.DataType
 }
 
 // GPRMC {{{
 
 type GPRMCSentence struct {
-	Sentence
+	SentenceCore
 
 	Time   int    `nmea:"1"`
 	Status string `nmea:"2"`
@@ -82,15 +91,6 @@ func (rmc *GPRMCSentence) GetLongitude() float64 {
 	default:
 		return 0
 	}
-}
-
-func NewGPRMCSentence(data string) (*GPRMCSentence, error) {
-	ret := GPRMCSentence{}
-	err := Decode(&ret, data)
-	if err != nil {
-		return nil, err
-	}
-	return &ret, nil
 }
 
 // }}}
