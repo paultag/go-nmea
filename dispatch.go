@@ -21,14 +21,29 @@
 package nmea
 
 import (
+	"fmt"
 	"reflect"
+	"strings"
 )
 
 type NMEA struct {
-	GPRMC *GPRMCSentence `nmeaDataType:"GPRMC"`
+	parsers map[string](func(string) (Sentence, error))
+	RMC     *GPRMCSentence `nmeaDataType:"GPRMC"`
 }
 
-func (d *NMEA) updateValue(key string, data reflect.Value) {
+func NewNMEA() NMEA {
+	n := NMEA{parsers: map[string](func(string) (Sentence, error)){}}
+
+	n.Register("GPRMC", func(data string) (Sentence, error) {
+		rmc := GPRMCSentence{}
+		err := Decode(&rmc, data)
+		return &rmc, err
+	})
+
+	return n
+}
+
+func (d *NMEA) updateValue(key string, data reflect.Value) error {
 	dValue := reflect.ValueOf(d).Elem()
 	dType := dValue.Type()
 
@@ -38,17 +53,34 @@ func (d *NMEA) updateValue(key string, data reflect.Value) {
 
 		if fieldType.Tag.Get("nmeaDataType") == key {
 			fieldValue.Set(data.Addr())
-			return
+			return nil
 		}
 	}
+	return fmt.Errorf("No such tag found: %s", key)
 }
 
-func (d *NMEA) Update(data Sentence) {
+func (d *NMEA) Register(key string, handler func(string) (Sentence, error)) {
+	d.parsers[key] = handler
+}
+
+func (d *NMEA) Parse(data string) error {
+	els := strings.SplitN(data, ",", 2)
+	if handler, ok := d.parsers[els[0][1:]]; ok {
+		el, err := handler(data)
+		if err != nil {
+			return err
+		}
+		d.Update(el)
+	}
+	return nil
+}
+
+func (d *NMEA) Update(data Sentence) error {
 	dValue := reflect.ValueOf(data)
 	if dValue.Kind() == reflect.Ptr {
 		dValue = dValue.Elem()
 	}
-	d.updateValue(data.GetDataType(), dValue)
+	return d.updateValue(data.GetDataType(), dValue)
 }
 
 // vim: foldmethod=marker

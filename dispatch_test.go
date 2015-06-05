@@ -27,13 +27,15 @@ import (
 )
 
 func TestCore(t *testing.T) {
-	n := nmea.NMEA{}
-	rmc := nmea.GPRMCSentence{}
-	err := nmea.Decode(&rmc,
+	n := nmea.NewNMEA()
+	assert(t, n.RMC == nil)
+
+	isok(t, n.Parse(
 		"$GPRMC,123519,A,4807.038,N,01131.000,E,022.4,084.4,230394,003.1,W*6A",
-	)
-	isok(t, err)
-	n.Update(&rmc)
+	))
+
+	assert(t, n.RMC.GetLatitude() == 48.07038)
+	assert(t, n.RMC.GetLongitude() == 11.31000)
 }
 
 // vim: foldmethod=marker
