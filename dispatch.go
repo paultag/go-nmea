@@ -25,7 +25,7 @@ import (
 )
 
 type NMEA struct {
-	GPRMC GPRMCSentence `nmeaDataType:"GPRMC"`
+	GPRMC *GPRMCSentence `nmeaDataType:"GPRMC"`
 }
 
 func (d *NMEA) updateValue(key string, data reflect.Value) {
@@ -37,7 +37,7 @@ func (d *NMEA) updateValue(key string, data reflect.Value) {
 		fieldValue := dValue.Field(i)
 
 		if fieldType.Tag.Get("nmeaDataType") == key {
-			fieldValue.Set(data)
+			fieldValue.Set(data.Addr())
 			return
 		}
 	}
