@@ -72,7 +72,7 @@ func decodeToPointer(incoming reflect.Value, data []string) error {
 			}
 			err = decodeToValue(field, data[index])
 			if err != nil {
-				return fmt.Errorf("failed to set: %s", err)
+				return fmt.Errorf("failed to set %s: %s", fieldType.Name, err)
 			}
 		}
 

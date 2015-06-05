@@ -38,8 +38,8 @@ func (s *SentenceCore) GetDataType() string {
 type GPRMCSentence struct {
 	SentenceCore
 
-	Time   int    `nmea:"1"`
-	Status string `nmea:"2"`
+	Time   float64 `nmea:"1"`
+	Status string  `nmea:"2"`
 
 	Latitude struct {
 		Parallel   float64 `nmea:"3"`
